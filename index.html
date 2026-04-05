@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Mico Vicencio — Portfolio</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --ease:cubic-bezier(0.16,1,0.3,1);
+  --blue:#3b7dd8;
+  --blue-light:#5b9cf6;
+  --teal:#2d9e8a;
+  --teal-light:#3bbdaa;
+  --amber:#c87c2a;
+  --violet:#7c5cbf;
+  --coral:#c95d3a;
+}
+
+[data-theme="dark"]{
+  --bg:#0d0f12;
+  --bg2:#111318;
+  --surface:#181c24;
+  --surface2:#1e2330;
+  --border:rgba(255,255,255,0.08);
+  --border2:rgba(255,255,255,0.14);
+  --text:#e8edf5;
+  --text2:#9aabbe;
+  --muted:#5a7089;
+  --dim:#2c3a4d;
+  --nav-bg:rgba(13,15,18,0.9);
+  --shadow:rgba(0,0,0,0.45);
+  --accent:var(--blue-light);
+  --accent-bg:rgba(91,156,246,0.1);
+  --accent-border:rgba(91,156,246,0.25);
+}
+
+[data-theme="light"]{
+  --bg:#f8f9fb;
+  --bg2:#ffffff;
+  --surface:#ffffff;
+  --surface2:#f0f3f8;
+  --border:rgba(0,0,0,0.08);
+  --border2:rgba(0,0,0,0.14);
+  --text:#1a2333;
+  --text2:#3d5268;
+  --muted:#6b8299;
+  --dim:#c8d5e3;
+  --nav-bg:rgba(248,249,251,0.92);
+  --shadow:rgba(0,0,0,0.08);
+  --accent:var(--blue);
+  --accent-bg:rgba(59,125,216,0.08);
+  --accent-border:rgba(59,125,216,0.2);
+}
+
+html{scroll-behavior:smooth}
+body{
+  font-family:'Inter',sans-serif;
+  background:var(--bg);color:var(--text);
+  overflow-x:hidden;
+  transition:background .4s var(--ease),color .4s var(--ease);
+  -webkit-font-smoothing:antialiased;
+}
+
+/* ── CURSOR ─── */
+.cursor{
+  position:fixed;width:8px;height:8px;background:var(--blue-light);border-radius:50%;
+  pointer-events:none;z-index:9999;mix-blend-mode:screen;
+  display:none;transition:transform .15s;
+}
+.cursor-ring{
+  position:fixed;width:32px;height:32px;border:1.5px solid rgba(91,156,246,0.35);
+  border-radius:50%;pointer-events:none;z-index:9998;
+  transition:width .3s var(--ease),height .3s var(--ease),border-color .3s;
+  display:none;
+}
+
+/* ── NAV ─── */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:500;
+  padding:0 clamp(18px,5vw,60px);height:58px;
+  display:flex;align-items:center;justify-content:space-between;
+  background:var(--nav-bg);
+  backdrop-filter:blur(20px) saturate(160%);
+  border-bottom:1px solid var(--border);
+  transition:background .4s,border-color .4s;
+}
+.nav-left{display:flex;align-items:center;gap:20px}
+.nav-id{
+  font-family:'Space Mono',monospace;font-size:.68rem;letter-spacing:.18em;
+  color:var(--accent);text-transform:uppercase;
+  display:flex;align-items:center;gap:8px;
+}
+.nav-dot{
+  width:6px;height:6px;border-radius:50%;background:var(--accent);
+  animation:blink 2.5s ease-in-out infinite;flex-shrink:0;
+}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+
+.nav-links{display:flex;gap:28px}
+.nav-links a{
+  font-family:'Space Mono',monospace;font-size:.62rem;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--muted);text-decoration:none;
+  transition:color .2s;position:relative;
+}
+.nav-links a:hover,.nav-links a.active{color:var(--accent)}
+.nav-links a.active::after{
+  content:'';position:absolute;bottom:-20px;left:0;right:0;height:2px;
+  background:var(--accent);border-radius:2px;
+}
+
+.theme-toggle{
+  display:flex;align-items:center;gap:8px;cursor:pointer;
+  padding:6px 14px;border:1px solid var(--border);border-radius:20px;
+  background:var(--surface2);transition:all .3s;
+  font-family:'Space Mono',monospace;font-size:.58rem;letter-spacing:.1em;
+  color:var(--muted);outline:none;
+}
+.theme-toggle:hover{border-color:var(--border2);color:var(--text2)}
+.toggle-track{
+  width:28px;height:16px;border-radius:99px;background:var(--dim);
+  position:relative;transition:background .3s;flex-shrink:0;
+}
+[data-theme="dark"] .toggle-track{background:rgba(91,156,246,0.28)}
+.toggle-thumb{
+  position:absolute;top:2px;left:2px;width:12px;height:12px;
+  border-radius:50%;background:var(--muted);
+  transition:transform .35s var(--ease),background .3s;
+}
+[data-theme="dark"] .toggle-thumb{background:var(--blue-light)}
+[data-theme="light"] .toggle-thumb{transform:translateX(12px);background:var(--blue)}
+.t-icon{font-size:.75rem;line-height:1}
+
+/* ── HERO ─── */
+.hero{
+  min-height:100vh;display:flex;align-items:center;
+  padding:100px clamp(20px,8vw,100px) 100px;
+  position:relative;overflow:hidden;
+}
+.hero-bg{
+  position:absolute;inset:0;pointer-events:none;
+}
+[data-theme="dark"] .hero-bg{
+  background:
+    radial-gradient(ellipse 60% 50% at 75% 45%,rgba(59,125,216,0.07) 0%,transparent 70%),
+    radial-gradient(ellipse 45% 60% at 10% 80%,rgba(45,158,138,0.05) 0%,transparent 65%);
+}
+[data-theme="light"] .hero-bg{
+  background:
+    radial-gradient(ellipse 60% 50% at 75% 45%,rgba(59,125,216,0.05) 0%,transparent 70%),
+    radial-gradient(ellipse 45% 60% at 10% 80%,rgba(45,158,138,0.04) 0%,transparent 65%);
+}
+
+.hero-content{position:relative;z-index:2;max-width:780px}
+.hero-tag{
+  font-family:'Space Mono',monospace;font-size:.66rem;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--accent);margin-bottom:24px;
+  display:inline-flex;align-items:center;gap:10px;
+  background:var(--accent-bg);border:1px solid var(--accent-border);
+  padding:6px 14px;border-radius:20px;
+  opacity:0;animation:slideIn .8s var(--ease) .2s forwards;
+}
+.hero-name{
+  font-family:'Inter',sans-serif;
+  font-size:clamp(2.8rem,8.5vw,6.5rem);
+  font-weight:700;line-height:.96;letter-spacing:-.04em;
+  margin-bottom:20px;
+  opacity:0;animation:slideIn .9s var(--ease) .35s forwards;
+}
+.hero-name .outline{
+  -webkit-text-stroke:1px var(--border2);
+  color:transparent;
+}
+[data-theme="light"] .hero-name .outline{
+  -webkit-text-stroke:1.5px var(--dim);
+}
+.hero-subtitle{
+  font-family:'Space Mono',monospace;font-size:clamp(.65rem,1.3vw,.75rem);
+  color:var(--muted);letter-spacing:.12em;text-transform:uppercase;
+  margin-bottom:26px;display:flex;align-items:center;gap:12px;
+  opacity:0;animation:slideIn .8s var(--ease) .5s forwards;
+}
+.hero-subtitle .sep{width:1px;height:12px;background:var(--border2);flex-shrink:0}
+.hero-bio{
+  font-family:'Inter',sans-serif;font-size:clamp(1rem,1.7vw,1.1rem);
+  font-weight:400;color:var(--text2);line-height:1.9;max-width:540px;
+  margin-bottom:40px;
+  opacity:0;animation:slideIn .8s var(--ease) .65s forwards;
+}
+.hero-bio strong{color:var(--text);font-weight:600}
+.hero-actions{
+  display:flex;gap:12px;flex-wrap:wrap;
+  opacity:0;animation:slideIn .8s var(--ease) .8s forwards;
+}
+.btn{
+  font-family:'Space Mono',monospace;font-size:.63rem;letter-spacing:.16em;
+  text-transform:uppercase;text-decoration:none;
+  padding:13px 26px;border-radius:6px;
+  transition:all .25s;display:inline-flex;align-items:center;gap:8px;
+  cursor:pointer;border:none;font-weight:700;
+}
+.btn-primary{
+  background:var(--blue);color:#fff;
+  box-shadow:0 2px 20px rgba(59,125,216,0.28);
+}
+.btn-primary:hover{transform:translateY(-2px);background:var(--blue-light);box-shadow:0 6px 28px rgba(91,156,246,0.38)}
+.btn-ghost{
+  background:transparent;color:var(--text2);border:1px solid var(--border);
+}
+.btn-ghost:hover{color:var(--text);border-color:var(--border2);background:var(--surface2)}
+
+.hero-status{
+  position:absolute;bottom:44px;left:clamp(20px,8vw,100px);
+  display:flex;gap:32px;align-items:center;flex-wrap:wrap;
+  opacity:0;animation:slideIn .8s var(--ease) 1s forwards;
+}
+.status-item{display:flex;flex-direction:column;gap:4px}
+.status-val{
+  font-family:'Inter',sans-serif;font-size:clamp(1.4rem,2.8vw,1.8rem);
+  font-weight:700;color:var(--text);letter-spacing:-.03em;
+}
+.status-key{font-family:'Space Mono',monospace;font-size:.5rem;letter-spacing:.15em;text-transform:uppercase;color:var(--muted)}
+.status-sep{width:1px;height:32px;background:var(--border);flex-shrink:0}
+@keyframes slideIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
+
+/* ── SECTIONS ─── */
+section{padding:clamp(80px,9vw,110px) clamp(20px,8vw,100px)}
+.inner{max-width:1140px;margin:0 auto}
+.section-label{
+  font-family:'Space Mono',monospace;font-size:.6rem;letter-spacing:.22em;
+  text-transform:uppercase;color:var(--accent);margin-bottom:12px;
+  display:flex;align-items:center;gap:8px;
+}
+.section-label::before{content:'//';opacity:.45}
+.section-title{
+  font-family:'Inter',sans-serif;
+  font-size:clamp(1.9rem,4.5vw,3rem);font-weight:700;
+  letter-spacing:-.04em;line-height:1.05;margin-bottom:clamp(32px,5vw,52px);color:var(--text);
+}
+
+/* ── SKILLS ─── */
+.skills-section{background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.skills-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:12px;
+}
+.skill-block{
+  background:var(--surface);border:1px solid var(--border);border-radius:10px;
+  padding:clamp(20px,3vw,28px);
+  position:relative;transition:border-color .3s,background .3s;overflow:hidden;
+}
+.skill-block:hover{background:var(--surface2);border-color:var(--border2)}
+.skill-accent{
+  position:absolute;top:0;left:0;right:0;height:2px;border-radius:2px 2px 0 0;
+}
+.skill-block:nth-child(1) .skill-accent{background:var(--blue)}
+.skill-block:nth-child(2) .skill-accent{background:var(--teal)}
+.skill-block:nth-child(3) .skill-accent{background:var(--amber)}
+.skill-block:nth-child(4) .skill-accent{background:var(--violet)}
+.skill-icon{font-size:1.3rem;margin-bottom:12px;display:block}
+.skill-name{
+  font-family:'Space Mono',monospace;font-size:.6rem;letter-spacing:.16em;
+  text-transform:uppercase;margin-bottom:14px;font-weight:700;
+}
+.skill-block:nth-child(1) .skill-name{color:var(--blue)}
+[data-theme="light"] .skill-block:nth-child(1) .skill-name{color:var(--blue)}
+.skill-block:nth-child(2) .skill-name{color:var(--teal)}
+.skill-block:nth-child(3) .skill-name{color:var(--amber)}
+.skill-block:nth-child(4) .skill-name{color:var(--violet)}
+.skill-pills{display:flex;flex-wrap:wrap;gap:6px}
+.spill{
+  font-family:'Space Mono',monospace;font-size:.58rem;letter-spacing:.06em;
+  color:var(--text2);background:var(--surface2);border:1px solid var(--border);
+  padding:4px 10px;border-radius:4px;transition:border-color .2s;
+}
+.skill-block:hover .spill{border-color:var(--border2)}
+
+/* ── PROJECTS ─── */
+.projects-section{background:var(--bg)}
+.projects-grid{display:grid;gap:clamp(16px,2vw,22px)}
+
+@media(min-width:900px){
+  .projects-grid{grid-template-columns:1fr 1fr}
+}
+
+.proj-card{
+  background:var(--surface);border:1px solid var(--border);border-radius:12px;
+  overflow:hidden;position:relative;
+  transition:border-color .3s,box-shadow .3s;
+}
+.proj-card:hover{
+  border-color:var(--border2);
+  box-shadow:0 8px 40px var(--shadow);
+}
+.proj-accent-bar{
+  position:absolute;left:0;top:0;bottom:0;width:2px;opacity:0;
+  transition:opacity .3s;z-index:2;
+}
+.proj-card:hover .proj-accent-bar{opacity:1}
+.proj-card:nth-child(1) .proj-accent-bar{background:var(--blue)}
+.proj-card:nth-child(2) .proj-accent-bar{background:var(--teal)}
+.proj-card:nth-child(3) .proj-accent-bar{background:var(--amber)}
+.proj-card:nth-child(4) .proj-accent-bar{background:var(--violet)}
+
+.proj-img-wrap{
+  width:100%;overflow:hidden;cursor:zoom-in;
+  background:var(--surface2);border-bottom:1px solid var(--border);
+  position:relative;
+}
+.proj-img-wrap img{
+  width:100%;display:block;
+  object-fit:cover;max-height:300px;
+  transition:transform .5s var(--ease);
+}
+.proj-card:hover .proj-img-wrap img{transform:scale(1.02)}
+.proj-img-placeholder{
+  display:none;width:100%;padding:44px 24px;
+  align-items:center;justify-content:center;gap:8px;flex-direction:column;
+  color:var(--muted);
+}
+.proj-img-placeholder span{font-family:'Space Mono',monospace;font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;opacity:.45}
+.zoom-hint{
+  position:absolute;bottom:10px;right:12px;
+  font-family:'Space Mono',monospace;font-size:.56rem;letter-spacing:.08em;text-transform:uppercase;
+  color:rgba(255,255,255,.85);
+  background:rgba(0,0,0,.5);backdrop-filter:blur(6px);
+  padding:5px 10px;border-radius:4px;
+  opacity:0;transition:opacity .25s;pointer-events:none;
+}
+.proj-card:hover .zoom-hint{opacity:1}
+
+.proj-body{
+  padding:clamp(18px,2.5vw,28px);
+  display:flex;justify-content:space-between;gap:16px;align-items:flex-start;
+}
+.proj-body-main{flex:1;min-width:0}
+.proj-num{
+  font-family:'Space Mono',monospace;font-size:.56rem;letter-spacing:.18em;
+  color:var(--muted);text-transform:uppercase;margin-bottom:8px;
+}
+.proj-name{
+  font-family:'Inter',sans-serif;font-size:clamp(1rem,2vw,1.25rem);
+  font-weight:600;letter-spacing:-.02em;line-height:1.3;margin-bottom:10px;color:var(--text);
+}
+.proj-desc{
+  font-family:'Inter',sans-serif;font-size:clamp(.88rem,1.15vw,.97rem);
+  font-weight:400;color:var(--text2);line-height:1.8;margin-bottom:16px;
+}
+.proj-stack{display:flex;flex-wrap:wrap;gap:5px}
+.stag{
+  font-family:'Space Mono',monospace;font-size:.56rem;letter-spacing:.07em;
+  color:var(--muted);border:1px solid var(--border);padding:3px 9px;border-radius:4px;
+}
+.proj-card:nth-child(1) .stag:first-child{color:var(--blue);border-color:rgba(59,125,216,0.3)}
+.proj-card:nth-child(2) .stag:first-child{color:var(--teal);border-color:rgba(45,158,138,0.3)}
+.proj-card:nth-child(3) .stag:first-child{color:var(--amber);border-color:rgba(200,124,42,0.3)}
+.proj-card:nth-child(4) .stag:first-child{color:var(--violet);border-color:rgba(124,92,191,0.3)}
+
+.proj-award{
+  flex-shrink:0;align-self:flex-start;
+  font-family:'Space Mono',monospace;font-size:.54rem;letter-spacing:.1em;
+  text-transform:uppercase;
+  padding:5px 10px;border-radius:5px;white-space:nowrap;
+}
+.proj-card:nth-child(1) .proj-award{color:var(--blue);background:rgba(59,125,216,0.1);border:1px solid rgba(59,125,216,0.22)}
+.proj-card:nth-child(2) .proj-award{color:var(--teal);background:rgba(45,158,138,0.1);border:1px solid rgba(45,158,138,0.22)}
+.proj-card:nth-child(3) .proj-award{color:var(--amber);background:rgba(200,124,42,0.1);border:1px solid rgba(200,124,42,0.22)}
+.proj-card:nth-child(4) .proj-award{color:var(--violet);background:rgba(124,92,191,0.1);border:1px solid rgba(124,92,191,0.22)}
+
+/* ── LIGHTBOX ─── */
+.lightbox{
+  position:fixed;inset:0;z-index:2000;
+  background:rgba(0,0,0,.88);backdrop-filter:blur(18px);
+  display:flex;align-items:center;justify-content:center;padding:24px;
+  opacity:0;pointer-events:none;transition:opacity .3s;
+}
+.lightbox.open{opacity:1;pointer-events:all}
+.lightbox img{
+  max-width:100%;max-height:90vh;border-radius:10px;
+  border:1px solid rgba(255,255,255,.1);object-fit:contain;
+  transform:scale(.95);transition:transform .4s var(--ease);
+}
+.lightbox.open img{transform:scale(1)}
+.lb-close{
+  position:absolute;top:20px;right:24px;
+  width:38px;height:38px;border-radius:50%;
+  background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);
+  color:#fff;font-size:1rem;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:background .2s,transform .2s;
+}
+.lb-close:hover{background:rgba(255,255,255,.2);transform:scale(1.1)}
+
+/* ── EXPERIENCE ─── */
+.exp-section{background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.exp-list{display:flex;flex-direction:column}
+.exp-item{
+  padding:clamp(24px,4vw,40px) 0;border-bottom:1px solid var(--border);
+  display:grid;grid-template-columns:200px 1fr;gap:clamp(20px,5vw,56px);align-items:start;
+}
+.exp-item:last-child{border-bottom:none;padding-bottom:0}
+.exp-period{
+  font-family:'Space Mono',monospace;font-size:.6rem;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--accent);margin-bottom:6px;
+}
+.exp-org{font-family:'Inter',sans-serif;font-size:.88rem;font-weight:400;color:var(--muted)}
+.exp-role{
+  font-family:'Inter',sans-serif;font-size:clamp(1rem,1.9vw,1.25rem);
+  font-weight:600;letter-spacing:-.02em;margin-bottom:14px;color:var(--text);
+}
+.exp-points{display:flex;flex-direction:column;gap:10px}
+.exp-point{
+  font-family:'Inter',sans-serif;font-size:clamp(.88rem,1.1vw,.97rem);
+  font-weight:400;color:var(--text2);line-height:1.8;
+  padding-left:16px;position:relative;
+}
+.exp-point::before{
+  content:'';position:absolute;left:0;top:10px;width:5px;height:1px;background:var(--dim);
+}
+
+/* ── AWARDS ─── */
+.awards-section{background:var(--bg)}
+.edu-block{
+  background:var(--surface);border:1px solid var(--border);border-radius:10px;
+  padding:clamp(20px,3vw,32px);margin-bottom:clamp(28px,4vw,44px);
+  display:flex;align-items:flex-start;gap:18px;
+}
+.edu-badge{
+  font-family:'Inter',sans-serif;font-size:1.1rem;font-weight:700;
+  color:var(--blue);background:rgba(59,125,216,0.1);
+  border:1px solid rgba(59,125,216,0.22);border-radius:8px;
+  padding:10px 14px;flex-shrink:0;line-height:1;
+}
+[data-theme="light"] .edu-badge{color:var(--blue)}
+.edu-degree{
+  font-family:'Inter',sans-serif;font-size:clamp(1rem,1.9vw,1.15rem);
+  font-weight:600;letter-spacing:-.02em;margin-bottom:5px;color:var(--text);
+}
+.edu-school{
+  font-family:'Space Mono',monospace;font-size:.6rem;letter-spacing:.13em;
+  text-transform:uppercase;color:var(--accent);margin-bottom:7px;
+}
+.edu-detail{
+  font-family:'Inter',sans-serif;font-size:.93rem;font-weight:400;color:var(--text2);line-height:1.65;
+}
+.awards-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
+  gap:10px;
+}
+.award-item{
+  background:var(--surface);border:1px solid var(--border);border-radius:10px;
+  padding:clamp(16px,2.5vw,24px);
+  transition:border-color .25s,background .25s;position:relative;overflow:hidden;
+}
+.award-item::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,var(--blue),var(--teal));opacity:.6;
+}
+.award-item:hover{background:var(--surface2);border-color:var(--border2)}
+.award-year{
+  font-family:'Space Mono',monospace;font-size:.56rem;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--muted);margin-bottom:7px;
+}
+.award-name{
+  font-family:'Inter',sans-serif;font-size:clamp(.9rem,1.3vw,1rem);
+  font-weight:600;letter-spacing:-.01em;line-height:1.3;margin-bottom:4px;color:var(--text);
+}
+.award-org{font-family:'Inter',sans-serif;font-size:.84rem;font-weight:400;color:var(--muted)}
+
+/* ── CONTACT ─── */
+.contact-section{
+  background:var(--bg2);border-top:1px solid var(--border);
+  text-align:center;padding:clamp(80px,10vw,120px) clamp(20px,8vw,100px);
+}
+.contact-label{
+  font-family:'Space Mono',monospace;font-size:.63rem;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--accent);margin-bottom:16px;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+}
+.contact-label::before{content:'//';opacity:.45}
+.contact-big{
+  font-family:'Inter',sans-serif;
+  font-size:clamp(2.2rem,6.5vw,5rem);font-weight:700;
+  letter-spacing:-.04em;line-height:.98;margin-bottom:40px;color:var(--text);
+}
+.contact-big .ug{
+  text-decoration:underline;text-underline-offset:10px;
+  text-decoration-color:var(--accent);text-decoration-thickness:2px;
+}
+.contact-links{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.contact-link{
+  font-family:'Space Mono',monospace;font-size:.6rem;letter-spacing:.13em;
+  text-transform:uppercase;color:var(--text2);text-decoration:none;
+  padding:11px 20px;border:1px solid var(--border);border-radius:6px;
+  transition:all .25s;display:flex;align-items:center;gap:8px;
+  background:var(--surface);
+}
+.contact-link:hover{color:var(--accent);border-color:var(--accent-border);background:var(--accent-bg)}
+
+footer{
+  background:var(--bg);border-top:1px solid var(--border);
+  padding:20px clamp(20px,8vw,100px);
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;
+}
+.footer-copy{font-family:'Space Mono',monospace;font-size:.56rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.footer-stack{font-family:'Space Mono',monospace;font-size:.56rem;letter-spacing:.09em;color:var(--dim)}
+
+/* ── REVEAL ─── */
+.reveal{opacity:0;transform:translateY(22px);transition:opacity .7s var(--ease),transform .7s var(--ease)}
+.reveal.vis{opacity:1;transform:none}
+.reveal-d1{transition-delay:.07s}.reveal-d2{transition-delay:.14s}
+.reveal-d3{transition-delay:.21s}.reveal-d4{transition-delay:.28s}
+
+/* ── RESPONSIVE ─── */
+@media(max-width:860px){
+  .nav-links{display:none}
+  .exp-item{grid-template-columns:1fr}
+  .exp-meta{display:flex;gap:14px;align-items:baseline;flex-wrap:wrap;margin-bottom:8px}
+  .exp-item{padding-top:clamp(20px,4vw,36px)}
+}
+@media(max-width:640px){
+  .proj-award{display:none}
+  .hero-status{flex-wrap:wrap;gap:18px 28px}
+  .status-sep{display:none}
+  .edu-block{flex-direction:column}
+  .contact-big{font-size:clamp(2rem,9vw,3.5rem)}
+  .skills-grid{grid-template-columns:1fr 1fr}
+  .awards-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:400px){
+  .skills-grid{grid-template-columns:1fr}
+  .awards-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox">
+  <button class="lb-close" id="lbClose">✕</button>
+  <img id="lbImg" src="" alt=""/>
+</div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-left">
+    <div class="nav-id"><div class="nav-dot"></div>mico.vicencio</div>
+    <div class="nav-links">
+      <a href="#skills">Skills</a>
+      <a href="#projects">Projects</a>
+      <a href="#experience">Experience</a>
+      <a href="#awards">Awards</a>
+      <a href="#contact">Contact</a>
+    </div>
+  </div>
+  <button class="theme-toggle" id="themeBtn" aria-label="Toggle theme">
+    <span class="t-icon">🌙</span>
+    <div class="toggle-track"><div class="toggle-thumb"></div></div>
+    <span class="t-icon">☀️</span>
+  </button>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+
+  <div class="hero-content">
+    <div class="hero-tag">Computer Science Graduate · Cainta Catholic College</div>
+    <h1 class="hero-name">Mico<br><span class="outline">Vicencio</span></h1>
+    <div class="hero-subtitle">
+      Full-Stack Dev
+      <span class="sep"></span>
+      IoT Engineer
+      <span class="sep"></span>
+      Android Dev
+    </div>
+    <p class="hero-bio">
+      I build systems that bridge the physical and digital world — <strong>RFID-based platforms, voice-controlled IoT hardware</strong>, and full-stack web applications. Graduated <strong>Cum Laude, Rank 1</strong> of BSCS 2026 with multiple national awards.
+    </p>
+    <div class="hero-actions">
+      <a href="#projects" class="btn btn-primary">View Projects</a>
+      <a href="mailto:micovicencio55@gmail.com" class="btn btn-ghost">Get in Touch</a>
+    </div>
+  </div>
+
+  <div class="hero-status">
+    <div class="status-item">
+      <span class="status-val">4</span>
+      <span class="status-key">Capstone Systems</span>
+    </div>
+    <div class="status-sep"></div>
+    <div class="status-item">
+      <span class="status-val">7+</span>
+      <span class="status-key">Awards Won</span>
+    </div>
+    <div class="status-sep"></div>
+    <div class="status-item">
+      <span class="status-val">3+</span>
+      <span class="status-key">Yrs Freelancing</span>
+    </div>
+    <div class="status-sep"></div>
+    <div class="status-item">
+      <span class="status-val">#1</span>
+      <span class="status-key">Class Rank</span>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section class="skills-section" id="skills">
+  <div class="inner">
+    <div class="section-label reveal">Technical Stack</div>
+    <h2 class="section-title reveal reveal-d1">What I work with</h2>
+    <div class="skills-grid reveal reveal-d2">
+      <div class="skill-block">
+        <div class="skill-accent"></div>
+        <span class="skill-icon">⌨️</span>
+        <div class="skill-name">Languages</div>
+        <div class="skill-pills">
+          <span class="spill">Python</span><span class="spill">Java</span>
+          <span class="spill">C++ / Arduino</span><span class="spill">JavaScript</span>
+          <span class="spill">HTML / CSS</span>
+        </div>
+      </div>
+      <div class="skill-block">
+        <div class="skill-accent"></div>
+        <span class="skill-icon">🔧</span>
+        <div class="skill-name">Frameworks & Tools</div>
+        <div class="skill-pills">
+          <span class="spill">Flask</span><span class="spill">Firebase</span>
+          <span class="spill">MySQL</span><span class="spill">SQLite</span>
+          <span class="spill">Google Sheets API</span><span class="spill">EmailJS</span>
+        </div>
+      </div>
+      <div class="skill-block">
+        <div class="skill-accent"></div>
+        <span class="skill-icon">🔌</span>
+        <div class="skill-name">Hardware & IoT</div>
+        <div class="skill-pills">
+          <span class="spill">Arduino</span><span class="spill">ESP32</span>
+          <span class="spill">RFID</span><span class="spill">Sensor Integration</span>
+          <span class="spill">Relay Modules</span>
+        </div>
+      </div>
+      <div class="skill-block">
+        <div class="skill-accent"></div>
+        <span class="skill-icon">🧠</span>
+        <div class="skill-name">Competencies</div>
+        <div class="skill-pills">
+          <span class="spill">Full-Stack Dev</span><span class="spill">Android Dev</span>
+          <span class="spill">GUI Design</span><span class="spill">Real-Time Systems</span>
+          <span class="spill">Technical Docs</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section class="projects-section" id="projects">
+  <div class="inner">
+    <div class="section-label reveal">Selected Work</div>
+    <h2 class="section-title reveal reveal-d1">Built Systems</h2>
+    <div class="projects-grid">
+
+      <div class="proj-card reveal reveal-d1">
+        <div class="proj-accent-bar"></div>
+        <div class="proj-img-wrap">
+          <img src="images/photo1.jfif" alt="RFID Smart Electricity Control System"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+          <div class="proj-img-placeholder">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+            <span>Place photo1.jfif in /images/</span>
+          </div>
+          <div class="zoom-hint">⤢ View Full</div>
+        </div>
+        <div class="proj-body">
+          <div class="proj-body-main">
+            <div class="proj-num">01</div>
+            <div class="proj-name">RFID & Mobile-Based Smart Electricity Control System</div>
+            <div class="proj-desc">Automated computer lab electricity management using RFID card authentication for authorized access control. Built a mobile and web dashboard for administrators to remotely toggle power and monitor device status in real time. Integrated Firebase for cross-platform sync and EmailJS for automated access alerts.</div>
+            <div class="proj-stack">
+              <span class="stag">IoT / Automation</span><span class="stag">Python</span><span class="stag">C++</span>
+              <span class="stag">Java</span><span class="stag">Firebase</span><span class="stag">Arduino</span>
+              <span class="stag">RFID</span><span class="stag">EmailJS</span>
+            </div>
+          </div>
+          <div class="proj-award">Best Thesis</div>
+        </div>
+      </div>
+
+      <div class="proj-card reveal reveal-d2">
+        <div class="proj-accent-bar"></div>
+        <div class="proj-img-wrap">
+          <img src="images/photo2.jfif" alt="Voice-Controlled Smart Power Management"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+          <div class="proj-img-placeholder">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+            <span>Place photo2.jfif in /images/</span>
+          </div>
+          <div class="zoom-hint">⤢ View Full</div>
+        </div>
+        <div class="proj-body">
+          <div class="proj-body-main">
+            <div class="proj-num">02</div>
+            <div class="proj-name">Voice-Controlled Smart Power Management</div>
+            <div class="proj-desc">Automated bedroom appliances — lights, AC, and TV — via Google Speech Recognition API voice commands. Built an Android app with manual toggle controls and real-time temperature monitoring via Arduino sensors. Firebase bridges the mobile app, Python backend, and hardware seamlessly.</div>
+            <div class="proj-stack">
+              <span class="stag">Smart Home</span><span class="stag">Python</span><span class="stag">C++</span>
+              <span class="stag">Java</span><span class="stag">Firebase</span><span class="stag">Google Speech API</span><span class="stag">Arduino</span>
+            </div>
+          </div>
+          <div class="proj-award">Best in Innovation</div>
+        </div>
+      </div>
+
+      <div class="proj-card reveal reveal-d3">
+        <div class="proj-accent-bar"></div>
+        <div class="proj-img-wrap">
+          <img src="images/photo3.jfif" alt="RFID Library Visitor Logging System"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+          <div class="proj-img-placeholder">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+            <span>Place photo3.jfif in /images/</span>
+          </div>
+          <div class="zoom-hint">⤢ View Full</div>
+        </div>
+        <div class="proj-body">
+          <div class="proj-body-main">
+            <div class="proj-num">03</div>
+            <div class="proj-name">RFID-Based Library Visitor Logging System</div>
+            <div class="proj-desc">Replaced manual library logbooks with automated RFID entry/exit timestamp recording. Implemented full CRUD student record management with bulk Excel import via openpyxl. Generated filterable PDF visitor reports by student name or date range using ReportLab.</div>
+            <div class="proj-stack">
+              <span class="stag">Desktop App</span><span class="stag">Python</span><span class="stag">SQLite</span>
+              <span class="stag">Tkinter</span><span class="stag">ReportLab</span><span class="stag">openpyxl</span><span class="stag">RFID</span>
+            </div>
+          </div>
+          <div class="proj-award">MAPSA Winner</div>
+        </div>
+      </div>
+
+      <div class="proj-card reveal reveal-d4">
+        <div class="proj-accent-bar"></div>
+        <div class="proj-img-wrap">
+          <img src="images/photo4.jfif" alt="ClinicConnect Student Health Management"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+          <div class="proj-img-placeholder">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+            <span>Place photo4.jfif in /images/</span>
+          </div>
+          <div class="zoom-hint">⤢ View Full</div>
+        </div>
+        <div class="proj-body">
+          <div class="proj-body-main">
+            <div class="proj-num">04</div>
+            <div class="proj-name">ClinicConnect: RFID-Based Student Health Management</div>
+            <div class="proj-desc">Replaced paper clinic records with instant RFID health profile retrieval for medical staff. Stores medical history, allergies, medications, and emergency contacts in a structured SQLite database. Automated parent email notifications via EmailJS whenever a student receives clinic attention.</div>
+            <div class="proj-stack">
+              <span class="stag">Health Tech</span><span class="stag">Python</span><span class="stag">HTML / CSS / JS</span>
+              <span class="stag">SQLite</span><span class="stag">EmailJS</span><span class="stag">RFID</span>
+            </div>
+          </div>
+          <div class="proj-award">Best Programmer</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section class="exp-section" id="experience">
+  <div class="inner">
+    <div class="section-label reveal">Experience</div>
+    <h2 class="section-title reveal reveal-d1">Where I've worked</h2>
+    <div class="exp-list">
+      <div class="exp-item reveal reveal-d2">
+        <div class="exp-meta">
+          <div class="exp-period">Jan 2022 – Present</div>
+          <div class="exp-org">Remote · Independent</div>
+        </div>
+        <div class="exp-body">
+          <div class="exp-role">Freelance Programmer</div>
+          <div class="exp-points">
+            <div class="exp-point">Developed desktop applications and IoT systems for academic and research clients</div>
+            <div class="exp-point">Built full-stack web applications using Flask (Python) with responsive frontend design</div>
+            <div class="exp-point">Integrated Arduino, ESP32, and Firebase for real-time IoT monitoring and control</div>
+          </div>
+        </div>
+      </div>
+      <div class="exp-item reveal reveal-d3">
+        <div class="exp-meta">
+          <div class="exp-period">Aug – Oct 2025</div>
+          <div class="exp-org">Cainta Catholic College</div>
+        </div>
+        <div class="exp-body">
+          <div class="exp-role">IT Staff — On-the-Job Training</div>
+          <div class="exp-points">
+            <div class="exp-point">Assisted in helpdesk operations, resolving hardware, software, and network issues</div>
+            <div class="exp-point">Performed hardware diagnostics, repair, and preventive maintenance</div>
+            <div class="exp-point">Supported software installation, system configuration, and computer lab management</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- AWARDS -->
+<section class="awards-section" id="awards">
+  <div class="inner">
+    <div class="section-label reveal">Recognition</div>
+    <h2 class="section-title reveal reveal-d1">Awards & Education</h2>
+    <div class="edu-block reveal reveal-d2">
+      <div class="edu-badge">BS</div>
+      <div>
+        <div class="edu-degree">Bachelor of Science in Computer Science</div>
+        <div class="edu-school">Cainta Catholic College · Aug 2022 – Mar 2026</div>
+        <div class="edu-detail">Graduated Cum Laude, Rank 1 of the graduating class · Dean's Lister, 1st–3rd Year</div>
+      </div>
+    </div>
+    <div class="awards-grid reveal reveal-d3">
+      <div class="award-item">
+        <div class="award-year">2026</div>
+        <div class="award-name">Best Thesis</div>
+        <div class="award-org">Cainta Catholic College</div>
+      </div>
+      <div class="award-item">
+        <div class="award-year">2026</div>
+        <div class="award-name">Best Programmer</div>
+        <div class="award-org">Cainta Catholic College</div>
+      </div>
+      <div class="award-item">
+        <div class="award-year">2026</div>
+        <div class="award-name">Best Presenter</div>
+        <div class="award-org">Cainta Catholic College</div>
+      </div>
+      <div class="award-item">
+        <div class="award-year">2026</div>
+        <div class="award-name">Best in Technological Innovation</div>
+        <div class="award-org">Cainta Catholic College</div>
+      </div>
+      <div class="award-item">
+        <div class="award-year">2026</div>
+        <div class="award-name">Cum Laude · Rank 1</div>
+        <div class="award-org">BSCS Graduating Class</div>
+      </div>
+      <div class="award-item">
+        <div class="award-year">2025</div>
+        <div class="award-name">Overall Star Award & Best in Software Development</div>
+        <div class="award-org">MAPSA Antipolo Research Congress</div>
+      </div>
+      <div class="award-item">
+        <div class="award-year">2024</div>
+        <div class="award-name">Community Favorite</div>
+        <div class="award-org">Arduino Day Philippines</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="contact-section" id="contact">
+  <div class="contact-label">Available for opportunities</div>
+  <div class="contact-big">Let's build<br>something <span class="ug">real.</span></div>
+  <div class="contact-links">
+    <a href="mailto:micovicencio55@gmail.com" class="contact-link">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+      micovicencio55@gmail.com
+    </a>
+    <a href="https://github.com/MicoVicencio" target="_blank" rel="noopener" class="contact-link">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+      github.com/MicoVicencio
+    </a>
+    <a href="tel:09998090144" class="contact-link">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13 19.79 19.79 0 0 1 1.61 4.39 2 2 0 0 1 3.58 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.09 6.09l1.17-1.17a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+      0999 809 0144
+    </a>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-copy">© 2026 Mico Dilag Vicencio · Taytay, Rizal</div>
+  <div class="footer-stack">BS Computer Science · Cainta Catholic College</div>
+</footer>
+
+<script>
+const doc = document.documentElement;
+const themeBtn = document.getElementById('themeBtn');
+function getTheme(){ return doc.getAttribute('data-theme') || 'dark'; }
+function setTheme(t){
+  doc.setAttribute('data-theme', t);
+  try{ localStorage.setItem('mv-theme', t); }catch(e){}
+}
+try{ const s = localStorage.getItem('mv-theme'); if(s) setTheme(s); }catch(e){}
+themeBtn.addEventListener('click', () => setTheme(getTheme() === 'dark' ? 'light' : 'dark'));
+
+if(window.matchMedia('(hover:hover)').matches){
+  const cur = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
+  cur.style.display = 'block'; ring.style.display = 'block';
+  let mx=-100,my=-100,rx=-100,ry=-100;
+  document.addEventListener('mousemove',e=>{ mx=e.clientX; my=e.clientY; cur.style.left=mx-4+'px'; cur.style.top=my-4+'px'; });
+  (function loop(){ rx+=(mx-rx)*.12; ry+=(my-ry)*.12; ring.style.left=rx-16+'px'; ring.style.top=ry-16+'px'; requestAnimationFrame(loop); })();
+  document.querySelectorAll('a,button,.proj-card,.skill-block,.award-item').forEach(el=>{
+    el.addEventListener('mouseenter',()=>{ ring.style.width='46px';ring.style.height='46px';ring.style.borderColor='rgba(91,156,246,.5)'; });
+    el.addEventListener('mouseleave',()=>{ ring.style.width='32px';ring.style.height='32px';ring.style.borderColor='rgba(91,156,246,.35)'; });
+  });
+}
+
+const lb=document.getElementById('lightbox');
+const lbImg=document.getElementById('lbImg');
+const lbClose=document.getElementById('lbClose');
+document.querySelectorAll('.proj-img-wrap').forEach(wrap=>{
+  wrap.addEventListener('click',()=>{
+    const img=wrap.querySelector('img');
+    if(!img||img.style.display==='none') return;
+    lbImg.src=img.src; lbImg.alt=img.alt;
+    lb.classList.add('open'); document.body.style.overflow='hidden';
+  });
+});
+function closeLb(){ lb.classList.remove('open'); document.body.style.overflow=''; }
+lbClose.addEventListener('click',closeLb);
+lb.addEventListener('click',e=>{ if(e.target===lb) closeLb(); });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeLb(); });
+
+const revObs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('vis'); });
+},{threshold:0.08});
+document.querySelectorAll('.reveal').forEach(el=>revObs.observe(el));
+
+const navLinks=document.querySelectorAll('.nav-links a');
+const navObs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      navLinks.forEach(l=>l.classList.remove('active'));
+      const a=document.querySelector(`.nav-links a[href="#${e.target.id}"]`);
+      if(a) a.classList.add('active');
+    }
+  });
+},{threshold:0.3});
+document.querySelectorAll('section[id]').forEach(s=>navObs.observe(s));
+</script>
+</body>
+</html>
